@@ -1,6 +1,63 @@
 # db
 
 
+create database ParcijalniIvanPelin;
+go
+
+use ParcijalniIvanPelin;
+go
+
+create table Prijatelji
+(
+Sifra int identity(1,1) primary key,
+Ime nvarchar (50) not null,
+Prezime nvarchar (50) not null
+)
+
+create table Diskovi
+(
+Sifra int identity(1,1) primary key,
+Naziv nvarchar (50),
+SifraPrijatelja int null foreign key references Prijatelji(sifra),
+DatumPosudbe datetime null,
+DatumVracanja datetime null
+)
+
+insert into Prijatelji (Ime, Prezime)
+values ('Pero', 'Perić'), ('Marko', 'Marković'), ('Ana','Anić')
+
+insert into Diskovi (Naziv)
+values ('Slayer'), ('Tumpa-tumpa'), ('Zadruga')
+
+update Diskovi set
+SifraPrijatelja = 2, 
+DatumPosudbe = '20240618 11:45:00'
+where sifra = 1
+
+update Diskovi set
+SifraPrijatelja = 1,
+DatumPosudbe = '20240619 11:00:00',
+DatumVracanja = '20240620 09:00:00'
+where sifra = 2
+
+update Diskovi set
+SifraPrijatelja = 3,
+DatumPosudbe = '20240611 04:30:00'
+where sifra = 3
+
+select di.Naziv as 'Disk', pr.Ime, pr.Prezime, DATEDIFF(d, di.DatumPosudbe, GETDATE()) as 'Posuđeno dana'
+from Diskovi di
+left join Prijatelji pr on di.SifraPrijatelja = pr.Sifra
+where di.DatumPosudbe is not null 
+and di.DatumVracanja is null
+
+update Diskovi set
+DatumVracanja = GETDATE()
+where DatumVracanja is null
+
+
+------
+
 --CREATE DATABASE Algebra;
 
 
